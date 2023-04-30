@@ -1,0 +1,31 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Edge {
+  id       Int               @id @default(autoincrement())
+  vertexes VertexesOnEdges[]
+}
+
+model Vertex {
+  id    Int               @id @default(autoincrement())
+  name  String            @unique
+  edges VertexesOnEdges[]
+}
+
+model VertexesOnEdges {
+  edge     Edge   @relation(fields: [edgeId], references: [id])
+  edgeId   Int
+  vertex   Vertex @relation(fields: [vertexId], references: [id])
+  vertexId Int
+
+  @@id([edgeId, vertexId])
+}
