@@ -8,7 +8,7 @@ export function Menu() {
         </BreadcrumbItem>
 
         <BreadcrumbItem>
-            <Link href='/' _hover={linkHoverStyles}>Statistics</Link>
+            <Link href='/stats' _hover={linkHoverStyles}>Statistics</Link>
         </BreadcrumbItem>
     </Breadcrumb>
 }

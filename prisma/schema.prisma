@@ -11,21 +11,12 @@ datasource db {
 }
 
 model Edge {
-  id       Int               @id @default(autoincrement())
-  vertexes VertexesOnEdges[]
+  id         Int @id @default(autoincrement())
+  fromNodeId Int
+  toNodeId   Int
 }
 
-model Vertex {
-  id    Int               @id @default(autoincrement())
-  name  String            @unique
-  edges VertexesOnEdges[]
-}
-
-model VertexesOnEdges {
-  edge     Edge   @relation(fields: [edgeId], references: [id])
-  edgeId   Int
-  vertex   Vertex @relation(fields: [vertexId], references: [id])
-  vertexId Int
-
-  @@id([edgeId, vertexId])
+model Node {
+  id   Int    @id @default(autoincrement())
+  name String @unique
 }
