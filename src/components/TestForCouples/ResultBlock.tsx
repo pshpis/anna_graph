@@ -2,7 +2,21 @@ import {useCallback, useMemo} from "react";
 import {Box, Button, Center, CircularProgress, CircularProgressLabel, Text, useToast, VStack} from "@chakra-ui/react"
 import axios from "axios";
 
-export function ResultBlock({answers}: any) {
+import {
+    Table,
+    Thead,
+    Tbody,
+    Tfoot,
+    Tr,
+    Th,
+    Td,
+    TableCaption,
+    TableContainer,
+} from '@chakra-ui/react'
+import {associations} from "@/components/TestForCouples/TestBlock";
+
+const transpose = (matrix : Array<Array<any>>) => matrix[0].map((col, i) => matrix.map(row => row[i]));
+export function ResultBlock({answers, name1, name2}: any) {
     const result = useMemo(() => {
         let ans: number = 0;
         let len: number = answers[0].length;
@@ -48,6 +62,29 @@ export function ResultBlock({answers}: any) {
             <CircularProgress value={result} size="100px" thickness="5px" color={result > 50 ? "green.400" : "blue"}>
                 <CircularProgressLabel>{result}%</CircularProgressLabel>
             </CircularProgress>
+
+            <TableContainer>
+                <Table variant='simple'>
+                    <Thead>
+                        <Tr>
+                            <Th>Association</Th>
+                            <Th>{name1}</Th>
+                            <Th>{name2}</Th>
+                        </Tr>
+                    </Thead>
+                    <Tbody>
+                        {transpose(answers).map((ans: Array<string>, i: number) => {
+                            return <Tr key={i}>
+                                <Td>{associations[i]}</Td>
+                                {ans.map((el: string, j: number) => {
+                                    return <Td key={i * answers[0].length + j}>{el}</Td>
+                                })}
+                            </Tr>
+                        })}
+                    </Tbody>
+                </Table>
+            </TableContainer>
+
             <Button onClick={sendData}>
                 Send data to statistic
             </Button>

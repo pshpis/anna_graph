@@ -1,11 +1,12 @@
 import {Header} from "@/components/Header";
-import {Box} from "@chakra-ui/react";
+import {Box, Button, HStack, Select, Text, VStack} from "@chakra-ui/react";
 import cytoscape from 'cytoscape'
-import {useEffect, useRef} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {prisma} from "@/lib/prisma";
 import {Node} from "@prisma/client";
+import {useRouter} from "next/router";
 
-export default function Home({elements}: any) {
+export default function Home({elements, nodes}: any) {
     const graphRef = useRef(null);
 
     const drawGraph = () => {
@@ -19,19 +20,47 @@ export default function Home({elements}: any) {
                         if(ele.isNode()) return ele.data('id');
                     }
                 }
-            }
-            ],
+            }],
         });
         cy.elements().toggleClass('hasLabel');
+        const layout = cy.layout({
+            'name': 'circle',
+        });
+        layout.run();
     }
 
     useEffect(() => {
         drawGraph();
-    }, [])
+    }, [elements]);
+
+    const router = useRouter();
+
+    const [currentNode, setCurrentNode] = useState<any>(null);
+
+
+    const onView = useCallback(async () => {
+        await router.push('/stats/' + currentNode.id);
+    }, [router, currentNode]);
+
+    const onSelect = useCallback((evt: any) => {
+        console.log(evt);
+        setCurrentNode(JSON.parse(evt.target.value));
+    }, [setCurrentNode])
 
     return (
         <>
             <Header/>
+            <VStack pt="10px">
+                <Text>Now you see full graph. If you want to see graph for special vertex choose it here. Graph will be drawn with depth 2.</Text>
+                <Select placeholder='Select node' onChange={onSelect} >
+                    {
+                    nodes.map((node: any, i : number) => {
+                        return <option value={JSON.stringify(node)} key={i}>{node.name}</option>
+                    })
+                    }
+                </Select>
+                <Button onClick={onView}>View new graph</Button>
+            </VStack>
             <Box ref={graphRef} style={{width: '100%', height: '80vh'}} id="cy" color="black">
             </Box>
 
@@ -72,7 +101,7 @@ export async function getServerSideProps() {
     }
     return {
         props: {
-            elements
+            elements, nodes
         }
     };
 }

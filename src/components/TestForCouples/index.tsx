@@ -1,6 +1,7 @@
 import {Indicator} from "@/components/TestForCouples/Indicator";
-import {Box, Center, useSteps, VStack} from "@chakra-ui/react";
+import {Box, Center, useBoolean, useSteps, VStack} from "@chakra-ui/react";
 import {TestBlock} from "@/components/TestForCouples/TestBlock";
+import {useState} from "react";
 
 const steps = [
     {title: 'Male', description: 'Test for gentleman'},

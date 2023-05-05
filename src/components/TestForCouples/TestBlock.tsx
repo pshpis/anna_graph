@@ -1,19 +1,14 @@
 import {Card} from "@chakra-ui/card";
-import {Button, Center, Input, Progress, Text, useToast} from '@chakra-ui/react'
+import {Button, Center, Input, Progress, Text, useBoolean, useToast} from '@chakra-ui/react'
 import {useCallback, useState} from "react";
 import {ResultBlock} from "@/components/TestForCouples/ResultBlock";
+import {PreTestForm} from "@/components/TestForCouples/PreTestForm";
 
-const questions = [
-    {
-        text: 'Write your association on word "Warm"'
-    },
-    {
-        text: 'Write your association on word "Cold"'
-    },
-    {
-        text: 'Write your association on word "Love"'
-    },
-]
+export const associations = ['Warm', 'Cold', 'Love'];
+
+export const questions = associations.map(assoc => {
+    return {text: `Write your association on word "${assoc}"`}
+});
 
 export function TestBlock({step, setStep, maxStep}: any) {
     const [questionId, setQuestionId] = useState(0);
@@ -51,7 +46,15 @@ export function TestBlock({step, setStep, maxStep}: any) {
         setQuestionId(questionId + 1)
     }, [answer, questionId, answers, step, toast, maxStep, setStep]);
 
-    return <Card minW="50%" maxW="700px" pb="20px">
+
+    const [name1, setName1] = useState<string>('');
+    const [name2, setName2] = useState<string>('');
+    const [haveNames, setHaveNames] = useBoolean(false);
+
+    return (!haveNames) ?
+    <PreTestForm name1={name1} setName1={setName1} name2={name2} setName2={setName2} clickHandler={setHaveNames.on}></PreTestForm>
+    :
+    <Card minW="50%" maxW="700px" pb="20px">
         <Progress hasStripe value={questionId / questions.length * 100} borderRadius="5px"/>
         {(questionId < questions.length) ?
             <>
@@ -72,7 +75,7 @@ export function TestBlock({step, setStep, maxStep}: any) {
                     </Button>
                 </Center>
             </> :
-            <ResultBlock answers={answers}/>
+            <ResultBlock answers={answers} name1={name1} name2={name2}/>
         }
-    </Card>
+    </Card>;
 }
